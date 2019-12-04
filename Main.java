@@ -1,14 +1,21 @@
 package edu.ilstu;
 
 import java.io.BufferedReader;
+
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Scanner;
 import java.io.FileWriter;
 import java.io.PrintWriter;
 
+
+
+
 public class Main {
+	
+	
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
@@ -18,7 +25,41 @@ public class Main {
 		int column = 0;
 		String switchInput;
 		String userInput;
+		ArrayList<Line> termsList = new ArrayList<>();
+
 		String exportName;
+		String termsLine;
+		
+
+        try (BufferedReader br = new BufferedReader(new FileReader("Terms.csv"))) {
+        	br.readLine();
+            while ((termsLine = br.readLine()) != null) {
+            	Line lines = new Line();
+            	
+                // use comma as separator
+                String[] readTxt = termsLine.split(",");
+
+                for (int i = 0; i < readTxt.length;i++) {
+                	if (!readTxt[i].equals("")) {
+                		if (i == 0)
+                			lines.setCui1(readTxt[i]);
+                	if (i == 1)
+            			lines.setName1(readTxt[i]);
+                	termsList.add(lines);
+            			lines = new Line();
+            		
+                }
+                }
+               
+
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+		
+		
+		ArrayList<Line> myList = new ArrayList<>();
 
 		do {
 			System.out.println("Please enter in 'A' to read a file.");
@@ -35,6 +76,7 @@ public class Main {
 				  System.out.println("Please enter the name of the file you want to read in");
 				  userInput = scanInput.nextLine();
 				  readInFile(userInput);
+				  System.out.println(myList);
 			    break;
 			  case "t":
 			  case "T":
@@ -58,25 +100,61 @@ public class Main {
 		}while (true);
 		
 	} 
-		
-	public void readInFile(String fileName) {
-		String text = "";
-		try {
-			Scanner scanner = new Scanner(new FileReader(fileName));
-			while (scanner.hasNextLine()) {
-				scanner.useDelimiter(",");
-				text = scanner.next();
-				System.out.print(text + ",");	
-			}	
-			
-		} catch (FileNotFoundException e) {
-            e.printStackTrace();
 	
-		}
+	public static void readInFile(String fileName) {
+		String text = "";
+		String finalText ="";
+		ArrayList<String> readin = new ArrayList<>();
+		
+		
+        String line = "";
+        ArrayList<Line> myList =new ArrayList<>();
+
+        try (BufferedReader br = new BufferedReader(new FileReader("relationships3.csv"))) {
+        	br.readLine();
+            while ((line = br.readLine()) != null) {
+            	Line lines = new Line();
+            	
+                // use comma as separator
+                String[] readTxt = line.split(",");
+
+                for (int i = 0; i < readTxt.length;i++) {
+                	if (!readTxt[i].equals(""))
+                		if (i == 0)
+                			lines.setCui1(readTxt[i]);
+                	if (i == 1)
+            			lines.setRelationship(readTxt[i]);
+                	if (i == 2)
+            			lines.setCui2(readTxt[i]);
+                	if (i == 3) {
+            			lines.setName2(readTxt[i]);
+            			myList.add(lines);
+            			lines = new Line();
+            		
+                	}
+                }
+               
+
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    
+		
+	System.out.println(myList);	 
+	
+      
+		
+		
+		
 		
 	}
+		
+
 	
-	public void writeToFile(String outFileName) throws IOException {
+	public static void writeToFile(String outFileName) throws IOException {
 			    FileWriter fileWriter = new FileWriter(outFileName);
 			    PrintWriter printWriter = new PrintWriter(fileWriter);
 			    printWriter.print("STR");
