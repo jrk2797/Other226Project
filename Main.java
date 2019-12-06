@@ -26,6 +26,7 @@ public class Main {
 		String switchInput;
 		String userInput;
 		ArrayList<Line> termsList = new ArrayList<>();
+		ArrayList<Line> allThings = new ArrayList<>();
 
 		String exportName;
 		String termsLine;
@@ -38,15 +39,18 @@ public class Main {
             	
                 // use comma as separator
                 String[] readTxt = termsLine.split(",");
+                System.out.println(readTxt[0]);
+                System.out.println(readTxt[1]);
 
                 for (int i = 0; i < readTxt.length;i++) {
                 	if (!readTxt[i].equals("")) {
                 		if (i == 0)
                 			lines.setCui1(readTxt[i]);
-                	if (i == 1)
+                	if (i == 1) {
             			lines.setName1(readTxt[i]);
                 	termsList.add(lines);
             			lines = new Line();
+                	}
             		
                 }
                 }
@@ -58,8 +62,9 @@ public class Main {
             e.printStackTrace();
         }
 		
-		
+        
 		ArrayList<Line> myList = new ArrayList<>();
+		
 
 		do {
 			System.out.println("Please enter in 'A' to read a file.");
@@ -75,8 +80,16 @@ public class Main {
 			  case "A": 
 				  System.out.println("Please enter the name of the file you want to read in");
 				  userInput = scanInput.nextLine();
-				  readInFile(userInput);
-				  System.out.println(myList);
+				 allThings.addAll(readInFile(userInput));
+				 for (Line term:  allThings) {
+					 if (term.getName1().equals(""))
+						 for (Line term2: termsList) {
+							 if (term.getCui1().equals(term2.getCui1()))
+								 term.setName1(term2.getName1());
+						 }
+				 }
+				 
+				  System.out.println(allThings);
 			    break;
 			  case "t":
 			  case "T":
@@ -101,7 +114,7 @@ public class Main {
 		
 	} 
 	
-	public static void readInFile(String fileName) {
+	public static ArrayList<Line> readInFile(String fileName) {
 		String text = "";
 		String finalText ="";
 		ArrayList<String> readin = new ArrayList<>();
@@ -142,14 +155,7 @@ public class Main {
         }
 
     
-		
-	System.out.println(myList);	 
-	
-      
-		
-		
-		
-		
+	return myList;
 	}
 		
 
