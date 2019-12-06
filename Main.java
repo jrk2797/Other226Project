@@ -1,3 +1,5 @@
+package edu.ilstu;
+
 import java.io.BufferedReader;
 
 import java.io.FileNotFoundException;
@@ -8,67 +10,41 @@ import java.util.Scanner;
 import java.io.FileWriter;
 import java.io.PrintWriter;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 
 
-
-public class Main {
+public class Main extends JFrame implements ActionListener {
 	
-	static ArrayList<String> alreadyRead = new ArrayList<>();
+	static JFrame frame;
 	
-	public static ArrayList<Line> readInFile(String fileName) {
-		String text = "";
-		String finalText ="";
-		
-		
-        String line = "";
-        ArrayList<Line> myList =new ArrayList<>();
-        
-        ArrayList<String> readin = new ArrayList<>();
-		if (alreadyRead.contains(fileName)) {
-			System.out.println("You've already read in this file.");
-			return myList;
-		}
-		alreadyRead.add(fileName);
-        int counter = 1;
-        try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
-        	br.readLine();
-            while ((line = br.readLine()) != null) {
-            	Line lines = new Line();
-            	
-                // use comma as separator
-                String[] readTxt = line.split(",");
-
-                for (int i = 0; i < readTxt.length;i++) {
-                	if (!readTxt[i].equals(""))
-                		if (i == 0)
-                			lines.setCui1(readTxt[i]);
-                	if (i == 1)
-            			lines.setRelationship(readTxt[i]);
-                	if (i == 2)
-            			lines.setCui2(readTxt[i]);
-                	if (i == 3) {
-            			lines.setName2(readTxt[i]);
-            			myList.add(lines);
-            			lines = new Line();
-            		
-                	}
-                	
-                }
-                counter++;
-                
-            }
-           System.out.println(counter + " Lines read in");
-        } catch (IOException e) {
-           System.out.println("Invalid File");
-        }
-
-    
-	return myList;
-	}
-
-	
-
 	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		
+		JFrame frame = new JFrame("Data");
+		Main x = new Main();
+		JPanel p = new JPanel();
+		JLabel label1 = new JLabel();
+       	label1.setText("Enter A for file, R for relationship, T for term, or E to exit");
+		label1.setBounds(50, 10, 400, 50);
+		JTextField text1 = new JTextField();
+		text1.setBounds(200, 60, 100, 25);
+		JButton b = new JButton("Submit");
+		b.setBounds(150, 100, 100, 50);
+		b.addActionListener(x);
+		p.add(label1);
+		p.add(text1);
+		p.add(b);
+		frame.add(p);
+		frame.setSize(400, 400);
+		frame.show();
+		
 		// TODO Auto-generated method stub
 		
 	    Scanner scanInput = new Scanner(System.in);
@@ -124,7 +100,7 @@ public class Main {
 			System.out.println("Or enter in 'E' to exit the program");
 			System.out.println(": ");
 			switchInput = scanInput.nextLine();
-			String outputfile = "";
+			
 			switch(switchInput) {
 			  
 			  case "a":
@@ -145,31 +121,12 @@ public class Main {
 			  case "t":
 			  case "T":
 				  System.out.println("Please enter in a medical term");
-				  userInput = scanInput.nextLine();
-				  System.out.println("Please enter file name to save data");
-				  outputfile = scanInput.nextLine();
-				  try {
-					writeToFile(outputfile, allThings, userInput, "T");
-				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-				  
-				  
-				  
 				  break;
 			  case "r":
 			  case "R":
 				  System.out.println("Please enter in the name of a relationship you want to export");
 				  userInput = scanInput.nextLine();
-				  System.out.println("Please enter file name to save data");
-				  outputfile = scanInput.nextLine();
-				  try {
-					writeToFile(outputfile, allThings, userInput, "R");
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+			    // code block
 			    break;
 			  case "E":
 			  case "e":
@@ -183,7 +140,54 @@ public class Main {
 		}while (true);
 		
 	} 
-	public static void writeToFile(String outFileName, ArrayList<Line> allThings, String userInput, String string) throws IOException {
+	
+	public static ArrayList<Line> readInFile(String fileName) {
+		String text = "";
+		String finalText ="";
+		ArrayList<String> readin = new ArrayList<>();
+		
+		
+        String line = "";
+        ArrayList<Line> myList =new ArrayList<>();
+
+        try (BufferedReader br = new BufferedReader(new FileReader("relationships3.csv"))) {
+        	br.readLine();
+            while ((line = br.readLine()) != null) {
+            	Line lines = new Line();
+            	
+                // use comma as separator
+                String[] readTxt = line.split(",");
+
+                for (int i = 0; i < readTxt.length;i++) {
+                	if (!readTxt[i].equals(""))
+                		if (i == 0)
+                			lines.setCui1(readTxt[i]);
+                	if (i == 1)
+            			lines.setRelationship(readTxt[i]);
+                	if (i == 2)
+            			lines.setCui2(readTxt[i]);
+                	if (i == 3) {
+            			lines.setName2(readTxt[i]);
+            			myList.add(lines);
+            			lines = new Line();
+            		
+                	}
+                }
+               
+
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    
+	return myList;
+	}
+		
+
+	
+	public static void writeToFile(String outFileName) throws IOException {
 			    FileWriter fileWriter = new FileWriter(outFileName);
 			    PrintWriter printWriter = new PrintWriter(fileWriter);
 			    printWriter.print("STR");
@@ -191,24 +195,24 @@ public class Main {
 			    printWriter.print("Relationship");
 			    printWriter.print(",");
 			    printWriter.print("STR2");
-			    printWriter.print("\n");
-			    for (Line aTerm: allThings) {
-			    	if(string.equals("R")) {
-					  if (aTerm.getRelationship().equals(userInput)) {
-						  printWriter.print(aTerm.getName1() +  ", "  + aTerm.getRelationship() + ", " + aTerm.getName2());
-						  
-					  }
-			    	}
-			    	else if (string.equals("T")) {
-			    		 if (aTerm.getName1().equals(userInput) || aTerm.getName1().equals(userInput)) {
-							  printWriter.print(aTerm.getName1() +  ", "  + aTerm.getRelationship() + ", " + aTerm.getName2());
-							  
-						  }
-			    	}
-			    	printWriter.print("\n");
-			    }
+			    printWriter.print(",");
+			    
 			    printWriter.close();
 			
 	
 	}
+	  
+	public void actionPerformed(ActionEvent e)
+	  {
+		  String s = e.getActionCommand();
+		  if(s.contentEquals("Submit"))
+		  {
+			  JDialog d = new JDialog(frame, "Data being presented");
+			  JLabel label = new JLabel("Here is the data");
+			  d.add(label);
+			  d.setSize(300,300);;
+			  d.setVisible(true);
+		  }
+	  }
+	  
 }
