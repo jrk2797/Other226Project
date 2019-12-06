@@ -10,7 +10,12 @@ public class Line {
 	
 	@Override
 	public String toString() {
-		return cui1; //+ "     " + relationship + "     " + cui2 + "     " + name2 + "\n\n";
+		String toString = "";
+		toString += cui1 + "      " + name1 + "\n";
+		toString += relationship + "\n";
+		toString += cui2 + "      " + name2 + "\n";
+		
+		return toString;
 	}
 	
 	
@@ -29,6 +34,16 @@ public class Line {
 	public String getRelationship() {
 		return relationship;
 	}
+	public Line() {
+		cui1 ="";
+		cui2 = "";
+		name1 = "";
+		name2 = "";
+		relationship = "";
+	}
+		
+
+
 	public void setRelationship(String relationship) {
 		this.relationship = relationship;
 	}
@@ -48,3 +63,4 @@ public class Line {
 	
 
 }
+
