@@ -1,5 +1,3 @@
-package edu.ilstu;
-
 import java.io.BufferedReader;
 
 import java.io.FileNotFoundException;
@@ -15,6 +13,59 @@ import java.io.PrintWriter;
 
 public class Main {
 	
+	static ArrayList<String> alreadyRead = new ArrayList<>();
+	
+	public static ArrayList<Line> readInFile(String fileName) {
+		String text = "";
+		String finalText ="";
+		
+		
+        String line = "";
+        ArrayList<Line> myList =new ArrayList<>();
+        
+        ArrayList<String> readin = new ArrayList<>();
+		if (alreadyRead.contains(fileName)) {
+			System.out.println("You've already read in this file.");
+			return myList;
+		}
+		alreadyRead.add(fileName);
+        int counter = 1;
+        try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
+        	br.readLine();
+            while ((line = br.readLine()) != null) {
+            	Line lines = new Line();
+            	
+                // use comma as separator
+                String[] readTxt = line.split(",");
+
+                for (int i = 0; i < readTxt.length;i++) {
+                	if (!readTxt[i].equals(""))
+                		if (i == 0)
+                			lines.setCui1(readTxt[i]);
+                	if (i == 1)
+            			lines.setRelationship(readTxt[i]);
+                	if (i == 2)
+            			lines.setCui2(readTxt[i]);
+                	if (i == 3) {
+            			lines.setName2(readTxt[i]);
+            			myList.add(lines);
+            			lines = new Line();
+            		
+                	}
+                	
+                }
+                counter++;
+                
+            }
+           System.out.println(counter + " Lines read in");
+        } catch (IOException e) {
+           System.out.println("Invalid File");
+        }
+
+    
+	return myList;
+	}
+
 	
 
 	public static void main(String[] args) {
@@ -73,7 +124,7 @@ public class Main {
 			System.out.println("Or enter in 'E' to exit the program");
 			System.out.println(": ");
 			switchInput = scanInput.nextLine();
-			
+			String outputfile = "";
 			switch(switchInput) {
 			  
 			  case "a":
@@ -94,12 +145,31 @@ public class Main {
 			  case "t":
 			  case "T":
 				  System.out.println("Please enter in a medical term");
+				  userInput = scanInput.nextLine();
+				  System.out.println("Please enter file name to save data");
+				  outputfile = scanInput.nextLine();
+				  try {
+					writeToFile(outputfile, allThings, userInput, "T");
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				  
+				  
+				  
 				  break;
 			  case "r":
 			  case "R":
 				  System.out.println("Please enter in the name of a relationship you want to export");
 				  userInput = scanInput.nextLine();
-			    // code block
+				  System.out.println("Please enter file name to save data");
+				  outputfile = scanInput.nextLine();
+				  try {
+					writeToFile(outputfile, allThings, userInput, "R");
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			    break;
 			  case "E":
 			  case "e":
@@ -113,54 +183,7 @@ public class Main {
 		}while (true);
 		
 	} 
-	
-	public static ArrayList<Line> readInFile(String fileName) {
-		String text = "";
-		String finalText ="";
-		ArrayList<String> readin = new ArrayList<>();
-		
-		
-        String line = "";
-        ArrayList<Line> myList =new ArrayList<>();
-
-        try (BufferedReader br = new BufferedReader(new FileReader("relationships3.csv"))) {
-        	br.readLine();
-            while ((line = br.readLine()) != null) {
-            	Line lines = new Line();
-            	
-                // use comma as separator
-                String[] readTxt = line.split(",");
-
-                for (int i = 0; i < readTxt.length;i++) {
-                	if (!readTxt[i].equals(""))
-                		if (i == 0)
-                			lines.setCui1(readTxt[i]);
-                	if (i == 1)
-            			lines.setRelationship(readTxt[i]);
-                	if (i == 2)
-            			lines.setCui2(readTxt[i]);
-                	if (i == 3) {
-            			lines.setName2(readTxt[i]);
-            			myList.add(lines);
-            			lines = new Line();
-            		
-                	}
-                }
-               
-
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-    
-	return myList;
-	}
-		
-
-	
-	public static void writeToFile(String outFileName) throws IOException {
+	public static void writeToFile(String outFileName, ArrayList<Line> allThings, String userInput, String string) throws IOException {
 			    FileWriter fileWriter = new FileWriter(outFileName);
 			    PrintWriter printWriter = new PrintWriter(fileWriter);
 			    printWriter.print("STR");
@@ -168,12 +191,24 @@ public class Main {
 			    printWriter.print("Relationship");
 			    printWriter.print(",");
 			    printWriter.print("STR2");
-			    printWriter.print(",");
-			    
+			    printWriter.print("\n");
+			    for (Line aTerm: allThings) {
+			    	if(string.equals("R")) {
+					  if (aTerm.getRelationship().equals(userInput)) {
+						  printWriter.print(aTerm.getName1() +  ", "  + aTerm.getRelationship() + ", " + aTerm.getName2());
+						  
+					  }
+			    	}
+			    	else if (string.equals("T")) {
+			    		 if (aTerm.getName1().equals(userInput) || aTerm.getName1().equals(userInput)) {
+							  printWriter.print(aTerm.getName1() +  ", "  + aTerm.getRelationship() + ", " + aTerm.getName2());
+							  
+						  }
+			    	}
+			    	printWriter.print("\n");
+			    }
 			    printWriter.close();
 			
 	
 	}
-	  
-	  
 }
